@@ -5,6 +5,9 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  View,
+  TouchableOpacity,
+  Image,
 } from "react-native";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "../styles/styles";
@@ -30,6 +33,7 @@ function BotChatRoom({ navigation, route }) {
     const botMessage = {
       id: messageLogs.length + 1, // Unique ID for each message
       text: "Hello! How can I help you today?",
+      isUser: false,
     };
 
     // add the userMessage first then the botMessage to the messageLogs
@@ -38,9 +42,13 @@ function BotChatRoom({ navigation, route }) {
   };
 
   const insertMessageLog = (messageText) => {
+    if (messageText === "") {
+      return;
+    }
     const newMessage = {
       id: messageLogs.length + 1, // Unique ID for each message
       text: messageText,
+      isUser: true,
     };
     insertBotMessage(newMessage);
   };
@@ -63,15 +71,22 @@ function BotChatRoom({ navigation, route }) {
             return <MessageLogBlock key={index} messageLogData={messageLog} />;
           })}
         </ScrollView>
-        <TextInput
-          value={message}
-          style={styles.chatRoomTextInput}
-          placeholder="Type a message..."
-          placeholderTextColor={colorPalette.fifthColor}
-          onChangeText={(text) => setMessage(text)}
-          onSubmitEditing={() => insertMessageLog(message)}
-          returnKeyType="send"
-        />
+        <View style={styles.messagingEditingContainer}>
+          <TextInput
+            value={message}
+            style={styles.chatRoomTextInput}
+            placeholder="Type a message..."
+            placeholderTextColor={colorPalette.fifthColor}
+            onChangeText={(text) => setMessage(text)}
+            multiline={true}
+          />
+          <TouchableOpacity onPress={() => insertMessageLog(message)}>
+            <Image
+              source={require("../data/photos/sendMessage.png")}
+              style={styles.sendMessageIcon}
+            />
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

@@ -96,15 +96,38 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: fifthColor,
     color: fifthColor,
+    minHeight: 30,
+    maxHeight: 130,
+    width: "80%",
   },
-  messageLogContainer: {
+  messageLogContainerUser: {
+    alignSelf: "flex-end",
     backgroundColor: thirdColor,
     padding: 10,
     borderRadius: 10,
     marginVertical: 5,
+    maxWidth: "80%",
+  },
+  messageLogContainerBot: {
+    alignSelf: "flex-start",
+    backgroundColor: firstColor,
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+    maxWidth: "80%",
   },
   messageLogText: {
     color: fifthColor,
+  },
+  messagingEditingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  sendMessageIcon: {
+    height: 25,
+    width: 25,
+    marginLeft: 20,
+    tintColor: fifthColor,
   },
 });
 
