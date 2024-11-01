@@ -6,6 +6,14 @@ const thirdColor = "#124E66";
 const fourthColor = "#748D92";
 const fifthColor = "#D3D9D4";
 
+const colorPalette = {
+  firstColor,
+  secondColor,
+  thirdColor,
+  fourthColor,
+  fifthColor,
+};
+
 export default StyleSheet.create({
   androidContainer: {
     flex: 1,
@@ -36,6 +44,12 @@ export default StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+  },
+  chatRoomScrollContainer: {
+    flexGrow: 1,
+    backgroundColor: fifthColor,
+    padding: 10,
+    // justifyContent: "flex-end",
   },
   homeScreenSecondartTitleText: {
     color: fifthColor,
@@ -71,8 +85,27 @@ export default StyleSheet.create({
     textAlign: "center",
     marginVertical: 5,
   },
-  imageSide: {},
   textSide: {
     flex: 1,
   },
+  chatRoomTextInput: {
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 15,
+    marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: fifthColor,
+    color: fifthColor,
+  },
+  messageLogContainer: {
+    backgroundColor: thirdColor,
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  messageLogText: {
+    color: fifthColor,
+  },
 });
+
+export { colorPalette };

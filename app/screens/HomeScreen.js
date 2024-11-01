@@ -14,9 +14,10 @@ import ChatBotButton from "../components/ChatBotButton";
 import BotData from "../data/BotData.json";
 
 function HomeScreen({ navigation, route }) {
-  const tempFunction = () => {
-    console.log("Temp Function");
+  const gotoChat = (botId) => {
+    navigation.navigate("BotChatRoom", { botId: botId });
   };
+
   return (
     <SafeAreaView on style={styles.androidContainer}>
       <Text style={styles.homeScreenMainTitleText}>Welcome to AI Buddy!</Text>
@@ -33,7 +34,7 @@ function HomeScreen({ navigation, route }) {
                   title={bot.name}
                   description={bot.description}
                   imageId={bot.imageSrc}
-                  goto={() => console.log("Chat with", bot.name)}
+                  goto={() => gotoChat(bot.id)}
                 />
               );
             })}
