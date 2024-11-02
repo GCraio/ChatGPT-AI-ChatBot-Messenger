@@ -8,18 +8,22 @@ import {
   View,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../styles/styles";
 import BotData from "../data/BotData.json";
 import { colorPalette } from "../styles/styles";
-import ChatBotButton from "../components/ChatBotButton";
 import MessageLogBlock from "../components/MessageLogBlock";
+import { OPENAI_API_KEY_Gabriel, OPENAI_API_KEY_ROPRO } from "@env";
+import OpenAI from "openai";
 
 function BotChatRoom({ navigation, route }) {
   const [botData, setBotData] = useState({});
   const [message, setMessage] = useState("");
   const [messageLogs, setMessageLogs] = useState([]);
+  const openai = new OpenAI({ apiKey: OPENAI_API_KEY_ROPRO });
+  const [loading, setLoading] = useState(false);
 
   const getBotData = () => {
     // Get the bot data from the BotData.json file
@@ -29,28 +33,51 @@ function BotChatRoom({ navigation, route }) {
     navigation.setOptions({ title: "Chatting with " + jsonBotData.name });
   };
 
-  const insertBotMessage = (userMessage) => {
-    const botMessage = {
-      id: messageLogs.length + 1, // Unique ID for each message
-      text: "Hello! How can I help you today?",
-      isUser: false,
-    };
-
-    // add the userMessage first then the botMessage to the messageLogs
-    setMessageLogs([...messageLogs, userMessage, botMessage]);
-    setMessage("");
-  };
-
-  const insertMessageLog = (messageText) => {
-    if (messageText === "") {
+  const getBotResponse = async (prompt) => {
+    if (prompt === "") {
       return;
     }
-    const newMessage = {
-      id: messageLogs.length + 1, // Unique ID for each message
-      text: messageText,
-      isUser: true,
-    };
-    insertBotMessage(newMessage);
+    setLoading(true);
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: prompt,
+              },
+            ],
+          },
+        ],
+      });
+
+      const botRespone = response.choices[0].message.content;
+
+      const newMessage = {
+        id: messageLogs.length + 1,
+        text: prompt,
+        isUser: true,
+      };
+
+      const botMessage = {
+        id: messageLogs.length + 2,
+        text: botRespone,
+        isUser: false,
+      };
+
+      setMessageLogs([...messageLogs, newMessage, botMessage]);
+      setMessage("");
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(
+        "Error: ",
+        error.response ? error.response.data : error.message
+      );
+    }
   };
 
   useEffect(() => {
@@ -80,12 +107,17 @@ function BotChatRoom({ navigation, route }) {
             onChangeText={(text) => setMessage(text)}
             multiline={true}
           />
-          <TouchableOpacity onPress={() => insertMessageLog(message)}>
-            <Image
-              source={require("../data/photos/sendMessage.png")}
-              style={styles.sendMessageIcon}
-            />
-          </TouchableOpacity>
+          {loading && (
+            <ActivityIndicator size="large" color={colorPalette.fifthColor} />
+          )}
+          {!loading && (
+            <TouchableOpacity onPress={() => getBotResponse(message)}>
+              <Image
+                source={require("../data/photos/sendMessage.png")}
+                style={styles.sendMessageIcon}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
