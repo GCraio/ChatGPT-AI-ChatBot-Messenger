@@ -35,7 +35,7 @@ export default StyleSheet.create({
     flex: 1,
   },
   homeScreenBotsContainer: {
-    backgroundColor: fifthColor,
+    backgroundColor: fourthColor,
     padding: 10,
     borderRadius: 10,
     borderWidth: 3,
@@ -61,6 +61,7 @@ export default StyleSheet.create({
     height: 75,
     width: 75,
     marginRight: 15,
+    borderRadius: 10,
   },
   chatBotButton: {
     flexDirection: "row",
@@ -70,16 +71,18 @@ export default StyleSheet.create({
     marginVertical: 5,
   },
   chatBotButtonContainer: {
-    backgroundColor: firstColor,
+    backgroundColor: fifthColor,
     padding: 10,
     borderRadius: 10,
     marginVertical: 7,
+    borderWidth: 3,
+    borderColor: firstColor,
   },
   chatBotButtonTextDescription: {
     color: fifthColor,
   },
   chatBotButtonTitleText: {
-    color: fifthColor,
+    color: firstColor,
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
