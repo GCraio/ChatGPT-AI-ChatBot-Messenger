@@ -89,10 +89,6 @@ function BotChatRoom({ navigation, route }) {
     }
   };
 
-  const textToSpeech = () => {
-    Tts.speak("Hello Matilda, you are so beautiful");
-  };
-
   useEffect(() => {
     getBotData();
   }, []);
