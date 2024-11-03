@@ -129,6 +129,11 @@ export default StyleSheet.create({
     marginLeft: 20,
     tintColor: fifthColor,
   },
+  stopSpeakingButtonText: {
+    color: fifthColor,
+    textAlign: "center",
+    fontSize: 12,
+  },
 });
 
 export { colorPalette };

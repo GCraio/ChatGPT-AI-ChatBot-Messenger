@@ -22,14 +22,12 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.gabwincalc.AISpeechProject"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "@react-native-voice/voice"
-    ],
     "extra": {
       "eas": {
         "projectId": "713d5f23-0d79-4949-84a4-8eea048953db"

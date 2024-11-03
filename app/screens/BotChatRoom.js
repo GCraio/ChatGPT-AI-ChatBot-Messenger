@@ -17,6 +17,7 @@ import { colorPalette } from "../styles/styles";
 import MessageLogBlock from "../components/MessageLogBlock";
 import { OPENAI_API_KEY_Gabriel, OPENAI_API_KEY_ROPRO } from "@env";
 import OpenAI from "openai";
+import Tts from "react-native-tts";
 
 function BotChatRoom({ navigation, route }) {
   const [botData, setBotData] = useState({});
@@ -24,6 +25,9 @@ function BotChatRoom({ navigation, route }) {
   const [messageLogs, setMessageLogs] = useState([]);
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY_ROPRO });
   const [loading, setLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  Tts.addEventListener("tts-start", (event) => setIsSpeaking(true));
+  Tts.addEventListener("tts-finish", (event) => setIsSpeaking(false));
 
   const getBotData = () => {
     // Get the bot data from the BotData.json file
@@ -38,6 +42,10 @@ function BotChatRoom({ navigation, route }) {
       return;
     }
     setLoading(true);
+
+    const botPersonality = botData.personality;
+    const finalPrompt = botPersonality + " Here is the user prompt:  " + prompt;
+
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -47,7 +55,7 @@ function BotChatRoom({ navigation, route }) {
             content: [
               {
                 type: "text",
-                text: prompt,
+                text: finalPrompt,
               },
             ],
           },
@@ -71,6 +79,7 @@ function BotChatRoom({ navigation, route }) {
       setMessageLogs([...messageLogs, newMessage, botMessage]);
       setMessage("");
       setLoading(false);
+      Tts.speak(botRespone);
     } catch (error) {
       setLoading(false);
       console.error(
@@ -78,6 +87,10 @@ function BotChatRoom({ navigation, route }) {
         error.response ? error.response.data : error.message
       );
     }
+  };
+
+  const textToSpeech = () => {
+    Tts.speak("Hello Matilda, you are so beautiful");
   };
 
   useEffect(() => {
@@ -110,12 +123,24 @@ function BotChatRoom({ navigation, route }) {
           {loading && (
             <ActivityIndicator size="large" color={colorPalette.fifthColor} />
           )}
-          {!loading && (
+          {!loading && !isSpeaking && (
             <TouchableOpacity onPress={() => getBotResponse(message)}>
               <Image
                 source={require("../data/photos/sendMessage.png")}
                 style={styles.sendMessageIcon}
               />
+            </TouchableOpacity>
+          )}
+          {!loading && isSpeaking && (
+            <TouchableOpacity
+              onPress={() => {
+                Tts.stop();
+                setIsSpeaking(false);
+              }}
+            >
+              <Text style={styles.stopSpeakingButtonText}>
+                Stop{"\n"}Speaking
+              </Text>
             </TouchableOpacity>
           )}
         </View>
