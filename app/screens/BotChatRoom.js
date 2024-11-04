@@ -19,11 +19,8 @@ import { OPENAI_API_KEY_ROPRO } from "@env";
 import OpenAI from "openai";
 import Tts from "react-native-tts";
 import Voice from "@react-native-voice/voice";
-import {
-  insertMessage,
-  getMessagesByBotId,
-  deleteMessagesByBotId,
-} from "../data/DatabaseSQLService";
+import { insertMessage, getMessagesByBotId } from "../data/DatabaseSQLService";
+import LoadingModal from "../components/LoadingModal";
 
 function BotChatRoom({ navigation, route }) {
   const [botData, setBotData] = useState({});
@@ -32,9 +29,11 @@ function BotChatRoom({ navigation, route }) {
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY_ROPRO });
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   Tts.addEventListener("tts-start", (event) => setIsSpeaking(true));
   Tts.addEventListener("tts-finish", (event) => setIsSpeaking(false));
   const textInputRef = useRef(null);
+  const scrollRef = useRef(null);
 
   const getBotData = () => {
     // Get the bot data from the BotData.json file
@@ -53,9 +52,11 @@ function BotChatRoom({ navigation, route }) {
       // insert all the previous messages from the database
       setMessageLogs([...messageLogs, ...result, botMessage]);
 
-      Tts.speak(jsonBotData.initialMessage);
       // edit screen title name
       navigation.setOptions({ title: "Chatting with " + jsonBotData.name });
+      setTimeout(() => {
+        Tts.speak(jsonBotData.initialMessage);
+      }, 1500);
     });
   };
 
@@ -119,6 +120,14 @@ function BotChatRoom({ navigation, route }) {
     getBotData();
   }, []);
 
+  useEffect(() => {
+    // scroll to the bottom of the chat room after n seconds
+    setTimeout(() => {
+      setInitializing(false);
+      scrollRef.current.scrollToEnd({ animated: true });
+    }, 1500);
+  }, [messageLogs]);
+
   // Setting up Voice event listeners
   useEffect(() => {
     // Event listener for speech results
@@ -154,10 +163,14 @@ function BotChatRoom({ navigation, route }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={90}
       >
-        <ScrollView contentContainerStyle={styles.chatRoomScrollContainer}>
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.chatRoomScrollContainer}
+        >
           {messageLogs.map((messageLog, index) => {
             return <MessageLogBlock key={index} messageLogData={messageLog} />;
           })}
+          <LoadingModal currLoading={initializing} />
         </ScrollView>
         <View style={styles.messagingEditingContainer}>
           <View style={styles.chatRoomTextInputContainer}>

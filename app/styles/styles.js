@@ -151,6 +151,17 @@ export default StyleSheet.create({
     fontSize: 12,
     marginLeft: 6,
   },
+  modalLoadingBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust the alpha (last value) to control transparency
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centeredViewLoadingIndicator: {
+    // flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 export { colorPalette };
