@@ -15,9 +15,10 @@ import styles from "../styles/styles";
 import BotData from "../data/BotData.json";
 import { colorPalette } from "../styles/styles";
 import MessageLogBlock from "../components/MessageLogBlock";
-import { OPENAI_API_KEY_Gabriel, OPENAI_API_KEY_ROPRO } from "@env";
+import { OPENAI_API_KEY_ROPRO } from "@env";
 import OpenAI from "openai";
 import Tts from "react-native-tts";
+import Voice from "@react-native-voice/voice";
 
 function BotChatRoom({ navigation, route }) {
   const [botData, setBotData] = useState({});
@@ -93,6 +94,21 @@ function BotChatRoom({ navigation, route }) {
     getBotData();
   }, []);
 
+  useEffect(() => {
+    Voice.onSpeechPartialResults = (event) => {
+      setMessage(event.value[0]);
+    };
+
+    // Clean up event listeners on component unmount
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const startListening = () => {
+    Voice.start("en-US");
+  };
+
   return (
     <SafeAreaView style={styles.androidContainer}>
       <KeyboardAvoidingView
@@ -108,22 +124,42 @@ function BotChatRoom({ navigation, route }) {
           })}
         </ScrollView>
         <View style={styles.messagingEditingContainer}>
-          <TextInput
-            value={message}
-            style={styles.chatRoomTextInput}
-            placeholder="Type a message..."
-            placeholderTextColor={colorPalette.fifthColor}
-            onChangeText={(text) => setMessage(text)}
-            multiline={true}
-          />
+          <View style={styles.chatRoomTextInputContainer}>
+            <TextInput
+              value={message}
+              style={styles.chatRoomTextInput}
+              placeholder="Type a message..."
+              placeholderTextColor={colorPalette.fifthColor}
+              onChangeText={(text) => setMessage(text)}
+              multiline={true}
+            />
+            {!loading && !isSpeaking && (
+              <TouchableOpacity onPress={() => getBotResponse(message)}>
+                <Image
+                  source={require("../data/photos/sendMessage.png")}
+                  style={styles.sendMessageIcon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+
           {loading && (
-            <ActivityIndicator size="large" color={colorPalette.fifthColor} />
+            <ActivityIndicator
+              style={styles.activityIndicatorStyle}
+              size="large"
+              color={colorPalette.fifthColor}
+            />
           )}
           {!loading && !isSpeaking && (
-            <TouchableOpacity onPress={() => getBotResponse(message)}>
+            <TouchableOpacity
+              onPress={() => {
+                startListening();
+                setIsSpeaking(true);
+              }}
+            >
               <Image
-                source={require("../data/photos/sendMessage.png")}
-                style={styles.sendMessageIcon}
+                source={require("../data/photos/microphone.png")}
+                style={styles.microphoneIcon}
               />
             </TouchableOpacity>
           )}

@@ -13,16 +13,17 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gabwincalc.AISpeechProject"
+      "bundleIdentifier": "com.gabwincalc.AISpeechProject",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app needs access to your microphone to process speech."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
+      "permissions": ["RECORD_AUDIO"],
       "package": "com.gabwincalc.AISpeechProject"
     },
     "web": {

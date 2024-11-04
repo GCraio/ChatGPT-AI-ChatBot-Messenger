@@ -93,15 +93,20 @@ export default StyleSheet.create({
   },
   chatRoomTextInput: {
     padding: 10,
-    borderRadius: 10,
-    marginVertical: 15,
-    marginHorizontal: 5,
-    borderWidth: 1,
-    borderColor: fifthColor,
     color: fifthColor,
     minHeight: 30,
     maxHeight: 130,
     width: "80%",
+  },
+  chatRoomTextInputContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: fifthColor,
+    borderRadius: 10,
+    marginVertical: 15,
+    marginHorizontal: 5,
   },
   messageLogContainerUser: {
     alignSelf: "flex-end",
@@ -129,13 +134,22 @@ export default StyleSheet.create({
   sendMessageIcon: {
     height: 25,
     width: 25,
-    marginLeft: 20,
     tintColor: fifthColor,
+  },
+  microphoneIcon: {
+    height: 25,
+    width: 25,
+    tintColor: fifthColor,
+    marginLeft: 8,
+  },
+  activityIndicatorStyle: {
+    marginLeft: 10,
   },
   stopSpeakingButtonText: {
     color: fifthColor,
     textAlign: "center",
     fontSize: 12,
+    marginLeft: 6,
   },
 });
 
