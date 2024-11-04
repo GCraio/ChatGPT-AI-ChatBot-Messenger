@@ -34,6 +34,16 @@ function BotChatRoom({ navigation, route }) {
     // Get the bot data from the BotData.json file
     const jsonBotData = BotData.find((bot) => bot.id === route.params.botId);
     setBotData(jsonBotData);
+
+    // insert the first message from the bot
+    const botMessage = {
+      id: messageLogs.length + 1,
+      text: jsonBotData.initialMessage,
+      isUser: false,
+    };
+
+    setMessageLogs([...messageLogs, botMessage]);
+    Tts.speak(jsonBotData.initialMessage);
     // edit screen title name
     navigation.setOptions({ title: "Chatting with " + jsonBotData.name });
   };
