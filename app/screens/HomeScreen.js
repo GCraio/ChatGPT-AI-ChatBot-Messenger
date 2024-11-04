@@ -8,14 +8,43 @@ import {
   ActivityIndicator,
   Platform,
   Image,
+  Alert,
 } from "react-native";
 import styles from "../styles/styles";
 import ChatBotButton from "../components/ChatBotButton";
 import BotData from "../data/BotData.json";
+import {
+  createTables,
+  deleteMessagesByBotId,
+} from "../data/DatabaseSQLService";
 
 function HomeScreen({ navigation, route }) {
+  const createTablesCheck = async () => {
+    await createTables();
+  };
+
+  useEffect(() => {
+    createTablesCheck();
+  }, []);
+
   const gotoChat = (botId) => {
     navigation.navigate("BotChatRoom", { botId: botId });
+  };
+
+  const deleteChat = async (botId) => {
+    Alert.alert("Delete Chat", "Are you sure you want to delete this chat?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        onPress: async () => {
+          await deleteMessagesByBotId(botId);
+          console.log("Chat Deleted");
+        },
+      },
+    ]);
   };
 
   return (
@@ -35,6 +64,7 @@ function HomeScreen({ navigation, route }) {
                   description={bot.description}
                   imageId={bot.imageSrc}
                   goto={() => gotoChat(bot.id)}
+                  deleteChat={() => deleteChat(bot.id)}
                 />
               );
             })}

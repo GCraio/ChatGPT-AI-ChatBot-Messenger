@@ -19,6 +19,11 @@ import { OPENAI_API_KEY_ROPRO } from "@env";
 import OpenAI from "openai";
 import Tts from "react-native-tts";
 import Voice from "@react-native-voice/voice";
+import {
+  insertMessage,
+  getMessagesByBotId,
+  deleteMessagesByBotId,
+} from "../data/DatabaseSQLService";
 
 function BotChatRoom({ navigation, route }) {
   const [botData, setBotData] = useState({});
@@ -36,17 +41,22 @@ function BotChatRoom({ navigation, route }) {
     const jsonBotData = BotData.find((bot) => bot.id === route.params.botId);
     setBotData(jsonBotData);
 
-    // insert the first message from the bot
-    const botMessage = {
-      id: messageLogs.length + 1,
-      text: jsonBotData.initialMessage,
-      isUser: false,
-    };
+    const prevMessages = getMessagesByBotId(route.params.botId);
+    prevMessages.then((result) => {
+      // insert the first message from the bot
+      const botMessage = {
+        pos: messageLogs.length + result.length + 1,
+        text: jsonBotData.initialMessage,
+        isUser: 0,
+      };
 
-    setMessageLogs([...messageLogs, botMessage]);
-    Tts.speak(jsonBotData.initialMessage);
-    // edit screen title name
-    navigation.setOptions({ title: "Chatting with " + jsonBotData.name });
+      // insert all the previous messages from the database
+      setMessageLogs([...messageLogs, ...result, botMessage]);
+
+      Tts.speak(jsonBotData.initialMessage);
+      // edit screen title name
+      navigation.setOptions({ title: "Chatting with " + jsonBotData.name });
+    });
   };
 
   const getBotResponse = async (prompt) => {
@@ -77,16 +87,20 @@ function BotChatRoom({ navigation, route }) {
       const botRespone = response.choices[0].message.content;
 
       const newMessage = {
-        id: messageLogs.length + 1,
+        pos: messageLogs.length + 1,
         text: prompt,
-        isUser: true,
+        isUser: 1,
+        botId: route.params.botId,
       };
+      await insertMessage(newMessage);
 
       const botMessage = {
-        id: messageLogs.length + 2,
+        pos: messageLogs.length + 2,
         text: botRespone,
-        isUser: false,
+        isUser: 0,
+        botId: route.params.botId,
       };
+      await insertMessage(botMessage);
 
       setMessageLogs([...messageLogs, newMessage, botMessage]);
       setMessage("");

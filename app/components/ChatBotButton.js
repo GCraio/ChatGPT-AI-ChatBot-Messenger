@@ -3,7 +3,7 @@ import styles from "../styles/styles";
 import { Text, View, TouchableOpacity, Image } from "react-native";
 import ImageBlock from "../data/renderPhotos";
 
-function ChatBotButton({ goto, title, description, imageId }) {
+function ChatBotButton({ goto, title, description, imageId, deleteChat }) {
   return (
     <View style={styles.chatBotButtonContainer}>
       <Text style={styles.chatBotButtonTitleText}>{title}</Text>
@@ -14,6 +14,9 @@ function ChatBotButton({ goto, title, description, imageId }) {
         <View style={styles.textSide}>
           <Text style={styles.chatBotButtonTextDescription}>{description}</Text>
         </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={deleteChat}>
+        <Text>Delete Chat</Text>
       </TouchableOpacity>
     </View>
   );
