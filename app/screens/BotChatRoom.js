@@ -10,7 +10,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "../styles/styles";
 import BotData from "../data/BotData.json";
 import { colorPalette } from "../styles/styles";
@@ -29,6 +29,7 @@ function BotChatRoom({ navigation, route }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   Tts.addEventListener("tts-start", (event) => setIsSpeaking(true));
   Tts.addEventListener("tts-finish", (event) => setIsSpeaking(false));
+  const textInputRef = useRef(null);
 
   const getBotData = () => {
     // Get the bot data from the BotData.json file
@@ -104,18 +105,29 @@ function BotChatRoom({ navigation, route }) {
     getBotData();
   }, []);
 
+  // Setting up Voice event listeners
   useEffect(() => {
-    Voice.onSpeechPartialResults = (event) => {
-      setMessage(event.value[0]);
+    // Event listener for speech results
+    Voice.onSpeechResults = (event) => {
+      if (event.value) {
+        const prevMessage = message;
+        setMessage(prevMessage + " " + event.value[0]);
+      }
     };
 
-    // Clean up event listeners on component unmount
+    // Event listener for when speech ends
+    Voice.onSpeechEnd = () => {
+      setIsSpeaking(false);
+    };
+
+    // Clean up listeners on unmount
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
-  }, []);
+  }, [message]);
 
   const startListening = () => {
+    textInputRef.current?.focus();
     Voice.start("en-US");
   };
 
@@ -136,6 +148,7 @@ function BotChatRoom({ navigation, route }) {
         <View style={styles.messagingEditingContainer}>
           <View style={styles.chatRoomTextInputContainer}>
             <TextInput
+              ref={textInputRef}
               value={message}
               style={styles.chatRoomTextInput}
               placeholder="Type a message..."
@@ -178,6 +191,7 @@ function BotChatRoom({ navigation, route }) {
               onPress={() => {
                 Tts.stop();
                 setIsSpeaking(false);
+                Voice.stop();
               }}
             >
               <Text style={styles.stopSpeakingButtonText}>
