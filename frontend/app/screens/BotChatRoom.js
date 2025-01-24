@@ -26,7 +26,8 @@ function BotChatRoom({ navigation, route }) {
   const [botData, setBotData] = useState({});
   const [message, setMessage] = useState("");
   const [messageLogs, setMessageLogs] = useState([]);
-  const openai = new OpenAI({ apiKey: OPENAI_API_KEY_ROPRO });
+  const apiKey = OPENAI_API_KEY_ROPRO;
+  const openai = new OpenAI({ apiKey: apiKey });
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [initializing, setInitializing] = useState(true);
